@@ -1,0 +1,41 @@
+{
+  "name": "grana-calc",
+  "version": "1.0.0",
+  "description": "Calculadora de Tempo de Trabalho - Educação Financeira para Decisões Conscientes",
+  "main": "index.html",
+  "scripts": {
+    "start": "python3 -m http.server 3000",
+    "serve": "npx http-server -p 3000 -c-1",
+    "docker:build": "docker build -t grana-calc:latest .",
+    "docker:run": "docker run -d -p 3000:3000 --name grana-calc grana-calc:latest",
+    "docker:stop": "docker stop grana-calc && docker rm grana-calc",
+    "docker:logs": "docker logs -f grana-calc",
+    "compose:up": "docker-compose up -d",
+    "compose:down": "docker-compose down",
+    "compose:logs": "docker-compose logs -f",
+    "k8s:deploy": "./deploy.sh deploy",
+    "k8s:clean": "./deploy.sh clean",
+    "k8s:status": "./deploy.sh status",
+    "k8s:logs": "./deploy.sh logs",
+    "kind:create": "kind create cluster --name grana-calc",
+    "kind:delete": "kind delete cluster --name grana-calc",
+    "kind:load": "kind load docker-image grana-calc:latest --name grana-calc"
+  },
+  "keywords": [
+    "finance",
+    "calculator",
+    "budgeting",
+    "financial-education",
+    "money-management",
+    "fintech"
+  ],
+  "author": "GranaCalc Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/grana-calc.git"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}

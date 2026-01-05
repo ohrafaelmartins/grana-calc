@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GranaCalc - Calculadora de Tempo de Trabalho</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2"/>
+                    <path d="M16 8V16L21 19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <h1>GranaCalc</h1>
+            </div>
+            <p class="subtitle">Descubra quanto do seu tempo vale cada compra</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Calculator Form -->
+            <section class="calculator-section">
+                <div class="card form-card">
+                    <h2>Dados Financeiros</h2>
+
+                    <!-- Salary Input -->
+                    <div class="form-group">
+                        <label for="salaryType">Como você prefere informar seu salário?</label>
+                        <div class="toggle-group">
+                            <button type="button" class="toggle-btn active" data-value="monthly">Mensal</button>
+                            <button type="button" class="toggle-btn" data-value="hourly">Por hora</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="salary">
+                            <span id="salaryLabel">Salário Mensal (R$)</span>
+                        </label>
+                        <input type="number" id="salary" placeholder="Ex: 3000" min="0" step="0.01" required>
+                    </div>
+
+                    <!-- Work Schedule -->
+                    <div class="work-schedule-grid">
+                        <div class="form-group">
+                            <label for="workDays">Dias trabalhados/semana</label>
+                            <input type="number" id="workDays" value="5" min="1" max="7" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="hoursPerDay">Horas por dia</label>
+                            <input type="number" id="hoursPerDay" value="8" min="1" max="24" step="0.5" required>
+                        </div>
+                    </div>
+
+                    <h2>Detalhes da Compra</h2>
+
+                    <div class="form-group">
+                        <label for="itemValue">Valor do Bem/Serviço (R$)</label>
+                        <input type="number" id="itemValue" placeholder="Ex: 500" min="0" step="0.01" required>
+                    </div>
+
+                    <!-- Payment Type -->
+                    <div class="form-group">
+                        <label>Forma de Pagamento</label>
+                        <div class="toggle-group">
+                            <button type="button" class="toggle-btn active" data-value="cash">À vista</button>
+                            <button type="button" class="toggle-btn" data-value="installment">Parcelado</button>
+                        </div>
+                    </div>
+
+                    <!-- Installment Fields (Hidden by default) -->
+                    <div id="installmentFields" class="installment-fields hidden">
+                        <div class="installment-grid">
+                            <div class="form-group">
+                                <label for="installmentValue">Valor da Parcela (R$)</label>
+                                <input type="number" id="installmentValue" placeholder="Ex: 100" min="0" step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label for="installmentCount">Número de Parcelas</label>
+                                <input type="number" id="installmentCount" placeholder="Ex: 12" min="1" max="120">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn-primary" id="calculateBtn">
+                        <span>Calcular</span>
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M4 10H16M16 10L11 5M16 10L11 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section id="resultsSection" class="results-section hidden">
+                <!-- Key Metrics Cards -->
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-icon"></div>
+                        <div class="metric-content">
+                            <h3>Horas de Trabalho</h3>
+                            <p class="metric-value" id="hoursNeeded">-</p>
+                            <span class="metric-label">necessárias</span>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon"></div>
+                        <div class="metric-content">
+                            <h3>Dias de Trabalho</h3>
+                            <p class="metric-value" id="daysNeeded">-</p>
+                            <span class="metric-label">equivalentes</span>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon"></div>
+                        <div class="metric-content">
+                            <h3>Semanas de Trabalho</h3>
+                            <p class="metric-value" id="weeksNeeded">-</p>
+                            <span class="metric-label">aproximadamente</span>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon"></div>
+                        <div class="metric-content">
+                            <h3>Valor da sua Hora</h3>
+                            <p class="metric-value" id="hourlyRate">-</p>
+                            <span class="metric-label">R$ por hora</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Impact Assessment -->
+                <div class="card impact-card">
+                    <h2>Avaliação de Impacto</h2>
+                    <div id="impactAssessment" class="impact-content">
+                        <!-- Dynamically filled by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Charts Grid -->
+                <div class="charts-grid">
+                    <!-- Salary Percentage Chart -->
+                    <div class="card chart-card">
+                        <h3>Comprometimento do Salário</h3>
+                        <canvas id="pieChart"></canvas>
+                        <div id="pieChartLegend" class="chart-legend"></div>
+                    </div>
+
+                    <!-- Progress Bar Chart -->
+                    <div class="card chart-card">
+                        <h3> Progresso para o Objetivo</h3>
+                        <canvas id="barChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Timeline -->
+                <div class="card timeline-card">
+                    <h3>Linha do Tempo</h3>
+                    <div id="timeline" class="timeline">
+                        <!-- Dynamically filled by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Reflection Message -->
+                <div class="card reflection-card">
+                    <div class="reflection-icon"></div>
+                    <div class="reflection-content">
+                        <h3>Reflexão Financeira</h3>
+                        <p id="reflectionMessage"></p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>GranaCalc © 2026 - Educação Financeira para Decisões Conscientes</p>
+        </div>
+    </footer>
+
+    <!-- Chart.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <!-- Main Script -->
+    <script src="script.js"></script>
+</body>
+</html>

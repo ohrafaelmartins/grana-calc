@@ -1,0 +1,109 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grana-calc-deployment
+  labels:
+    app: grana-calc
+    version: v1.0.0
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: grana-calc
+  template:
+    metadata:
+      labels:
+        app: grana-calc
+        version: v1.0.0
+    spec:
+      containers:
+        - name: grana-calc
+          image: grana-calc:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+              name: http
+              protocol: TCP
+          env:
+            - name: NODE_ENV
+              valueFrom:
+                secretKeyRef:
+                  name: grana-calc-secrets
+                  key: NODE_ENV
+            - name: SESSION_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: grana-calc-secrets
+                  key: SESSION_SECRET
+            - name: APP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: grana-calc-secrets
+                  key: APP_PASSWORD
+            - name: PORT
+              value: "3000"
+            - name: HOST
+              value: "0.0.0.0"
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "100m"
+            limits:
+              memory: "128Mi"
+              cpu: "200m"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grana-calc-service
+  labels:
+    app: grana-calc
+spec:
+  type: ClusterIP
+  selector:
+    app: grana-calc
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 3000
+  sessionAffinity: None
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grana-calc-nodeport
+  labels:
+    app: grana-calc
+spec:
+  type: NodePort
+  selector:
+    app: grana-calc
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 3000
+      nodePort: 30000

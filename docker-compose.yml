@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  # Main application service
+  app:
+    container_name: grana-calc
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: grana-calc:latest
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=${NODE_ENV:-production}
+    restart: unless-stopped
+    networks:
+      - grana-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "com.grana-calc.description=Financial Calculator Application"
+      - "com.grana-calc.version=1.0.0"
+
+networks:
+  grana-network:
+    driver: bridge
+    name: grana-calc-network
+
+# Optional: Add volumes for logs or persistent data if needed
+# volumes:
+#   logs:
+#     driver: local

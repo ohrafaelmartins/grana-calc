@@ -1,0 +1,31 @@
+# Ingress configuration for external access
+# Requires an Ingress Controller (e.g., nginx-ingress, traefik)
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: grana-calc-ingress
+  labels:
+    app: grana-calc
+  annotations:
+    # nginx.ingress.kubernetes.io/rewrite-target: /
+    # cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: grana-calc.local  # Change to your domain
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: grana-calc-service
+                port:
+                  number: 80
+  # Uncomment for TLS/HTTPS
+  # tls:
+  #   - hosts:
+  #       - grana-calc.local
+  #     secretName: grana-calc-tls
